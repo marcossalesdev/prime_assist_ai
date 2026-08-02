@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrimeAssist AI - Assistente de Documentos PrimePharma</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-logo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                    </svg>
+                </div>
+                <div class="brand-info">
+                    <h1>PrimePharma</h1>
+                    <span>PrimeAssist AI</span>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <button class="nav-item active" data-tab="chat-tab">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <span>Assistente Chat</span>
+                </button>
+                <button class="nav-item" data-tab="kb-tab">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                    <span>Base de Conhecimento</span>
+                    <span class="badge" id="kb-badge-count">0</span>
+                </button>
+                <button class="nav-item" data-tab="settings-tab">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    </svg>
+                    <span>Configurações</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="status-indicator">
+                    <span class="status-dot online"></span>
+                    <span id="api-status-text">Conectado ao Servidor</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- CHAT TAB -->
+            <section id="chat-tab" class="tab-content active">
+                <header class="content-header">
+                    <div class="header-info">
+                        <h2>PrimeAssist AI</h2>
+                        <p>Assistente virtual oficial para consulta de políticas, produtos e diretrizes da PrimePharma.</p>
+                    </div>
+                    <div class="header-actions">
+                        <button id="btn-clear-chat" class="btn btn-secondary">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
+                            Limpar Conversa
+                        </button>
+                    </div>
+                </header>
+
+                <div class="chat-container">
+                    <div class="chat-messages" id="chat-messages-container">
+                        <!-- Initial Message -->
+                        <div class="message system">
+                            <div class="message-avatar">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                                </svg>
+                            </div>
+                            <div class="message-body">
+                                <div class="message-sender">PrimeAssist AI</div>
+                                <div class="message-text">
+                                    Olá! Eu sou o **PrimeAssist AI**, o assistente oficial de inteligência artificial da **PrimePharma**. 
+                                    Consigo consultar documentos, políticas, tabelas de preço e estoque para responder suas dúvidas com precisão.
+                                    <br><br>
+                                    Como posso ajudar você hoje? Experimente perguntar algo como:
+                                    <ul>
+                                        <li><em>"Qual é a política de devolução de medicamentos termolábeis?"</em></li>
+                                        <li><em>"Tem Ritalina ou Amoxicilina em estoque? Quais os preços e se exige receita?"</em></li>
+                                        <li><em>"Como posso entrar em contato com o SAC ou Ouvidoria da empresa?"</em></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Input Area -->
+                    <div class="chat-input-wrapper">
+                        <form id="chat-form" class="chat-form">
+                            <textarea id="chat-input" placeholder="Pergunte sobre políticas, medicamentos, preços ou estoque..." rows="1" required></textarea>
+                            <button type="submit" class="btn btn-primary btn-send">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- KNOWLEDGE BASE TAB -->
+            <section id="kb-tab" class="tab-content">
+                <header class="content-header">
+                    <div class="header-info">
+                        <h2>Base de Conhecimento</h2>
+                        <p>Gerencie os documentos e planilhas oficiais que alimentam o cérebro do PrimeAssist AI.</p>
+                    </div>
+                </header>
+
+                <div class="kb-grid">
+                    <!-- Upload Card -->
+                    <div class="card upload-card">
+                        <h3>Adicionar Novo Documento</h3>
+                        <p class="card-desc">Faça upload de novas diretrizes, tabelas de estoque ou catálogos. Formatos suportados: <strong>.txt, .csv, .xlsx</strong>.</p>
+                        
+                        <div class="dropzone" id="dropzone">
+                            <input type="file" id="file-input" accept=".txt,.csv,.xlsx,.xls" style="display: none;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="dropzone-icon">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                            <p class="dropzone-text">Arraste um arquivo aqui ou <span>clique para buscar</span></p>
+                            <p class="dropzone-file-info" id="selected-file-name"></p>
+                        </div>
+                        
+                        <button id="btn-upload" class="btn btn-primary" disabled>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                            Indexar Arquivo
+                        </button>
+                    </div>
+
+                    <!-- Statistics Card -->
+                    <div class="card stats-card">
+                        <h3>Status do Cérebro</h3>
+                        <div class="stats-container">
+                            <div class="stat-item">
+                                <div class="stat-val" id="stat-docs-count">0</div>
+                                <div class="stat-lbl">Documentos Indexados</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-val" id="stat-chunks-count">0</div>
+                                <div class="stat-lbl">Blocos de Contexto</div>
+                            </div>
+                        </div>
+                        <div class="stats-alert">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="16" x2="12" y2="12"></line>
+                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                            </svg>
+                            <span>O assistente responde <strong>apenas</strong> com base nestes documentos. Qualquer pergunta fora deste escopo será respondida com uma mensagem de restrição padrão.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Document List Card -->
+                <div class="card doc-list-card">
+                    <h3>Documentos Indexados</h3>
+                    <div class="table-responsive">
+                        <table class="doc-table">
+                            <thead>
+                                <tr>
+                                    <th>Nome do Arquivo</th>
+                                    <th>Tipo</th>
+                                    <th>Tamanho</th>
+                                    <th>Volume Indexado</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="document-list-body">
+                                <tr>
+                                    <td colspan="5" class="empty-table">Buscando documentos indexados...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SETTINGS TAB -->
+            <section id="settings-tab" class="tab-content">
+                <header class="content-header">
+                    <div class="header-info">
+                        <h2>Configurações do Agente</h2>
+                        <p>Configure a conexão da IA, parâmetros de geração e chaves de API.</p>
+                    </div>
+                </header>
+
+                <div class="settings-grid">
+                    <div class="card settings-card-full">
+                        <h3>Conexão da API do Gemini</h3>
+                        <p class="card-desc">
+                            O PrimeAssist AI utiliza o modelo de linguagem <strong>Gemini 1.5 Flash</strong> da Google AI Studio. 
+                            Para gerar as respostas em linguagem natural, é necessário configurar sua chave de API pessoal.
+                        </p>
+                        
+                        <div class="form-group">
+                            <label for="gemini-api-key">Chave de API do Gemini (Google AI Studio)</label>
+                            <div class="input-wrapper-icon">
+                                <input type="password" id="gemini-api-key" placeholder="Insira seu AIzaSy..." autocomplete="off">
+                                <button type="button" id="toggle-api-key" class="btn-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-eye">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
+                                </button>
+                            </div>
+                            <span class="help-text">Sua chave é salva apenas localmente no seu navegador e enviada de forma segura nas requisições.</span>
+                        </div>
+
+                        <div class="settings-actions">
+                            <button id="btn-save-settings" class="btn btn-primary">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                                    <polyline points="7 3 7 8 15 8"></polyline>
+                                </svg>
+                                Salvar Configurações
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card settings-card-side">
+                        <h3>Como obter uma chave?</h3>
+                        <ol class="setup-steps">
+                            <li>Acesse o <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer">Google AI Studio</a>.</li>
+                            <li>Faça login com sua conta Google.</li>
+                            <li>Clique em <strong>"Get API Key"</strong> no menu lateral superior.</li>
+                            <li>Crie uma nova chave de API (Create API Key).</li>
+                            <li>Copie o código gerado e cole no painel ao lado.</li>
+                        </ol>
+                        <div class="badge-free">Grátis para desenvolvedores</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast">Mensagem de aviso</div>
+    <script src="app.js" defer></script>
+</body>
+</html>
