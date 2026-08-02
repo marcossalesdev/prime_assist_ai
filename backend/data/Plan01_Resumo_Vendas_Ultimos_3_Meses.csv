@@ -1,0 +1,101 @@
+Mês,Código,Produto,Estoque Atual,Estoque Mínimo,Quantidade Vendida
+Abril/2026,MED001,Paracetamol 750 mg,120,60,40
+Abril/2026,MED002,Dipirona 500 mg,95,47,57
+Abril/2026,MED003,Ibuprofeno 600 mg,80,40,74
+Abril/2026,MED004,Omeprazol 20 mg,110,55,91
+Abril/2026,MED005,Loratadina 10 mg,65,32,108
+Abril/2026,MED006,Amoxicilina 500 mg,42,21,125
+Abril/2026,MED007,Azitromicina 500 mg,38,19,142
+Abril/2026,MED008,Nimesulida 100 mg,70,35,159
+Abril/2026,MED009,Diclofenaco 50 mg,55,27,176
+Abril/2026,MED010,Prednisona 20 mg,48,24,193
+Abril/2026,MED011,Losartana 50 mg,130,65,210
+Abril/2026,MED012,Atenolol 50 mg,60,30,227
+Abril/2026,MED013,Hidroclorotiazida 25 mg,72,36,244
+Abril/2026,MED014,Sinvastatina 20 mg,88,44,41
+Abril/2026,MED015,Metformina 850 mg,105,52,58
+Abril/2026,MED016,AAS Infantil 100 mg,67,33,75
+Abril/2026,MED017,Sertralina 50 mg,36,18,92
+Abril/2026,MED018,Fluconazol 150 mg,40,20,109
+Abril/2026,MED019,Cetoconazol Creme,34,17,126
+Abril/2026,MED020,Neosaldina,58,29,143
+Abril/2026,GEN001,Paracetamol Gen. 500 mg,140,70,160
+Abril/2026,GEN002,Dipirona Gen. 500 mg,125,62,177
+Abril/2026,GEN003,Omeprazol Gen. 20 mg,92,46,194
+Abril/2026,GEN004,Losartana Gen. 50 mg,86,43,211
+Abril/2026,GEN005,Metformina Gen. 850 mg,77,38,228
+Abril/2026,GEN006,Ibuprofeno Gen. 600 mg,68,34,245
+Abril/2026,GEN007,Loratadina Gen. 10 mg,59,29,42
+Abril/2026,GEN008,Sinvastatina Gen. 20 mg,52,26,59
+Abril/2026,DER001,Protetor Solar FPS 50,28,14,76
+Abril/2026,DER002,Creme Hidratante,35,17,93
+Abril/2026,DER003,Gel Limpeza Facial,20,10,110
+Abril/2026,DER004,Água Micelar,26,13,127
+Abril/2026,DER005,Creme Antiacne,18,9,144
+Maio/2026,HIG001,Sabonete Líquido,60,30,161
+Maio/2026,HIG002,Creme Dental,90,45,178
+Maio/2026,HIG003,Escova Dental,75,37,195
+Maio/2026,HIG004,Fio Dental,45,22,212
+Maio/2026,HIG005,Enxaguante Bucal,32,16,229
+Maio/2026,SUP001,Vitamina C,55,27,246
+Maio/2026,SUP002,Multivitamínico,38,19,43
+Maio/2026,SUP003,Ômega 3,41,20,60
+Maio/2026,SUP004,Magnésio Quelato,29,14,77
+Maio/2026,SUP005,Colágeno,33,16,94
+Maio/2026,INF001,Fralda Infantil M,50,25,111
+Maio/2026,INF002,Lenço Umedecido,65,32,128
+Maio/2026,INF003,Shampoo Infantil,24,12,145
+Maio/2026,INF004,Pomada Assaduras,31,15,162
+Maio/2026,EQP001,Termômetro Digital,18,9,179
+Maio/2026,EQP002,Aparelho Pressão,12,6,196
+Maio/2026,EQP003,Medidor Glicemia,9,5,213
+Maio/2026,MED001,Paracetamol 750 mg,120,60,230
+Maio/2026,MED002,Dipirona 500 mg,95,47,247
+Maio/2026,MED003,Ibuprofeno 600 mg,80,40,44
+Maio/2026,MED004,Omeprazol 20 mg,110,55,61
+Maio/2026,MED005,Loratadina 10 mg,65,32,78
+Maio/2026,MED006,Amoxicilina 500 mg,42,21,95
+Maio/2026,MED007,Azitromicina 500 mg,38,19,112
+Maio/2026,MED008,Nimesulida 100 mg,70,35,129
+Maio/2026,MED009,Diclofenaco 50 mg,55,27,146
+Maio/2026,MED010,Prednisona 20 mg,48,24,163
+Maio/2026,MED011,Losartana 50 mg,130,65,180
+Maio/2026,MED012,Atenolol 50 mg,60,30,197
+Maio/2026,MED013,Hidroclorotiazida 25 mg,72,36,214
+Maio/2026,MED014,Sinvastatina 20 mg,88,44,231
+Maio/2026,MED015,Metformina 850 mg,105,52,248
+Maio/2026,MED016,AAS Infantil 100 mg,67,33,45
+Junho/2026,MED017,Sertralina 50 mg,36,18,62
+Junho/2026,MED018,Fluconazol 150 mg,40,20,79
+Junho/2026,MED019,Cetoconazol Creme,34,17,96
+Junho/2026,MED020,Neosaldina,58,29,113
+Junho/2026,GEN001,Paracetamol Gen. 500 mg,140,70,130
+Junho/2026,GEN002,Dipirona Gen. 500 mg,125,62,147
+Junho/2026,GEN003,Omeprazol Gen. 20 mg,92,46,164
+Junho/2026,GEN004,Losartana Gen. 50 mg,86,43,181
+Junho/2026,GEN005,Metformina Gen. 850 mg,77,38,198
+Junho/2026,GEN006,Ibuprofeno Gen. 600 mg,68,34,215
+Junho/2026,GEN007,Loratadina Gen. 10 mg,59,29,232
+Junho/2026,GEN008,Sinvastatina Gen. 20 mg,52,26,249
+Junho/2026,DER001,Protetor Solar FPS 50,28,14,46
+Junho/2026,DER002,Creme Hidratante,35,17,63
+Junho/2026,DER003,Gel Limpeza Facial,20,10,80
+Junho/2026,DER004,Água Micelar,26,13,97
+Junho/2026,DER005,Creme Antiacne,18,9,114
+Junho/2026,HIG001,Sabonete Líquido,60,30,131
+Junho/2026,HIG002,Creme Dental,90,45,148
+Junho/2026,HIG003,Escova Dental,75,37,165
+Junho/2026,HIG004,Fio Dental,45,22,182
+Junho/2026,HIG005,Enxaguante Bucal,32,16,199
+Junho/2026,SUP001,Vitamina C,55,27,216
+Junho/2026,SUP002,Multivitamínico,38,19,233
+Junho/2026,SUP003,Ômega 3,41,20,250
+Junho/2026,SUP004,Magnésio Quelato,29,14,47
+Junho/2026,SUP005,Colágeno,33,16,64
+Junho/2026,INF001,Fralda Infantil M,50,25,81
+Junho/2026,INF002,Lenço Umedecido,65,32,98
+Junho/2026,INF003,Shampoo Infantil,24,12,115
+Junho/2026,INF004,Pomada Assaduras,31,15,132
+Junho/2026,EQP001,Termômetro Digital,18,9,149
+Junho/2026,EQP002,Aparelho Pressão,12,6,166
+Junho/2026,EQP003,Medidor Glicemia,9,5,183

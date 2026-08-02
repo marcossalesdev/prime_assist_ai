@@ -1,0 +1,52 @@
+,,,,,,
+Código,Descrição do Produto,Categoria,Quantidade,Unidade,Lote,Validade
+MED001,Paracetamol 750 mg,Medicamento,120,Caixa,L250701,15/08/2027
+MED002,Dipirona 500 mg,Medicamento,95,Caixa,L250702,30/09/2027
+MED003,Ibuprofeno 600 mg,Medicamento,80,Caixa,L250703,18/10/2027
+MED004,Omeprazol 20 mg,Medicamento,110,Caixa,L250704,05/01/2028
+MED005,Loratadina 10 mg,Medicamento,65,Caixa,L250705,20/11/2027
+MED006,Amoxicilina 500 mg,Medicamento,42,Caixa,L250706,15/02/2028
+MED007,Azitromicina 500 mg,Medicamento,38,Caixa,L250707,25/12/2027
+MED008,Nimesulida 100 mg,Medicamento,70,Caixa,L250708,08/03/2028
+MED009,Diclofenaco 50 mg,Medicamento,55,Caixa,L250709,17/07/2027
+MED010,Prednisona 20 mg,Medicamento,48,Caixa,L250710,10/04/2028
+MED011,Losartana 50 mg,Medicamento,130,Caixa,L250711,28/06/2028
+MED012,Atenolol 50 mg,Medicamento,60,Caixa,L250712,19/09/2027
+MED013,Hidroclorotiazida 25 mg,Medicamento,72,Caixa,L250713,14/01/2028
+MED014,Sinvastatina 20 mg,Medicamento,88,Caixa,L250714,02/05/2028
+MED015,Metformina 850 mg,Medicamento,105,Caixa,L250715,21/10/2028
+MED016,AAS Infantil 100 mg,Medicamento,67,Caixa,L250716,12/08/2027
+MED017,Cloridrato de Sertralina 50 mg,Medicamento,36,Caixa,L250717,16/02/2028
+MED018,Fluconazol 150 mg,Medicamento,40,Caixa,L250718,09/09/2027
+MED019,Cetoconazol Creme,Medicamento,34,Tubo,L250719,30/03/2028
+MED020,Neosaldina,Medicamento,58,Caixa,L250720,11/12/2027
+GEN001,Paracetamol Genérico 500 mg,Genérico,140,Caixa,G250701,08/08/2028
+GEN002,Dipirona Genérica 500 mg,Genérico,125,Caixa,G250702,21/11/2027
+GEN003,Omeprazol Genérico 20 mg,Genérico,92,Caixa,G250703,15/01/2028
+GEN004,Losartana Genérica 50 mg,Genérico,86,Caixa,G250704,20/06/2028
+GEN005,Metformina Genérica 850 mg,Genérico,77,Caixa,G250705,01/09/2028
+GEN006,Ibuprofeno Genérico 600 mg,Genérico,68,Caixa,G250706,14/12/2027
+GEN007,Loratadina Genérica 10 mg,Genérico,59,Caixa,G250707,10/02/2028
+GEN008,Sinvastatina Genérica 20 mg,Genérico,52,Caixa,G250708,04/07/2028
+DER001,Protetor Solar FPS 50,Dermocosmético,28,Frasco,D250701,30/09/2028
+DER002,Creme Hidratante Corporal,Dermocosmético,35,Frasco,D250702,15/04/2028
+DER003,Gel de Limpeza Facial,Dermocosmético,20,Frasco,D250703,11/08/2028
+DER004,Água Micelar,Dermocosmético,26,Frasco,D250704,28/02/2028
+DER005,Creme Antiacne,Dermocosmético,18,Tubo,D250705,17/06/2028
+HIG001,Sabonete Líquido 250 ml,Higiene,60,Frasco,H250701,25/12/2028
+HIG002,Creme Dental 90 g,Higiene,90,Unidade,H250702,20/05/2028
+HIG003,Escova Dental Macia,Higiene,75,Unidade,H250703,31/12/2029
+HIG004,Fio Dental 50 m,Higiene,45,Unidade,H250704,14/09/2029
+HIG005,Enxaguante Bucal 500 ml,Higiene,32,Frasco,H250705,07/11/2028
+SUP001,Vitamina C 1 g,Suplemento,55,Tubo,S250701,16/10/2028
+SUP002,Multivitamínico Adulto,Suplemento,38,Frasco,S250702,01/02/2029
+SUP003,Ômega 3,Suplemento,41,Frasco,S250703,13/07/2028
+SUP004,Magnésio Quelato,Suplemento,29,Frasco,S250704,24/04/2029
+SUP005,Colágeno Hidrolisado,Suplemento,33,Pote,S250705,18/08/2028
+INF001,Fralda Infantil M,Infantil,50,Pacote,I250701,31/12/2029
+INF002,Lenço Umedecido,Infantil,65,Pacote,I250702,27/03/2029
+INF003,Shampoo Infantil,Infantil,24,Frasco,I250703,10/01/2029
+INF004,Pomada para Assaduras,Infantil,31,Tubo,I250704,19/09/2028
+EQP001,Termômetro Digital,Equipamento,18,Unidade,E250701,31/12/2030
+EQP002,Aparelho de Pressão Digital,Equipamento,12,Unidade,E250702,31/12/2030
+EQP003,Medidor de Glicemia,Equipamento,9,Unidade,E250703,31/12/2030
