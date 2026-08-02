@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+pandas
+google-generativeai
+openpyxl
+python-multipart
