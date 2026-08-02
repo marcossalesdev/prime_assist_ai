@@ -41,6 +41,8 @@ class RAGEngine:
                     chunk_id = self._parse_csv(filepath, filename, chunk_id)
                 elif ext in ['.xlsx', '.xls']:
                     chunk_id = self._parse_xlsx(filepath, filename, chunk_id)
+                elif ext == '.pdf':
+                    chunk_id = self._parse_pdf(filepath, filename, chunk_id)
             except Exception as e:
                 print(f"Erro ao processar arquivo {filename}: {str(e)}")
 
@@ -96,6 +98,67 @@ class RAGEngine:
     def _parse_xlsx(self, filepath: str, filename: str, start_id: int) -> int:
         df = pd.read_excel(filepath)
         return self._process_dataframe(df, filename, start_id)
+
+    def _parse_pdf(self, filepath: str, filename: str, start_id: int) -> int:
+        chunk_id = start_id
+        try:
+            from pypdf import PdfReader
+            reader = PdfReader(filepath)
+        except Exception as e:
+            print(f"Erro ao ler PDF {filename}: {str(e)}")
+            return chunk_id
+
+        for page_num, page in enumerate(reader.pages):
+            text = page.extract_text()
+            if not text or not text.strip():
+                continue
+
+            # Limpar e normalizar espaçamentos do PDF
+            text_cleaned = re.sub(r'\s+', ' ', text).strip()
+            if not text_cleaned:
+                continue
+
+            # Dividir em blocos de até 800 caracteres buscando limites de sentenças/palavras
+            max_chars = 800
+            start = 0
+            subsections = []
+            while start < len(text_cleaned):
+                end = start + max_chars
+                if end >= len(text_cleaned):
+                    subsections.append(text_cleaned[start:])
+                    break
+                
+                # Procurar final de frase nos últimos 150 caracteres do bloco
+                limit = max(start, end - 150)
+                split_pos = -1
+                for p in range(end, limit - 1, -1):
+                    if text_cleaned[p] in ['.', '!', '?'] and p + 1 < len(text_cleaned) and text_cleaned[p+1] == ' ':
+                        split_pos = p + 1
+                        break
+                
+                if split_pos == -1:
+                    # Alternativa: procurar o último espaço em branco
+                    for p in range(end, limit - 1, -1):
+                        if text_cleaned[p] == ' ':
+                            split_pos = p
+                            break
+                
+                if split_pos == -1:
+                    split_pos = end
+                
+                subsections.append(text_cleaned[start:split_pos].strip())
+                start = split_pos
+
+            for idx, sub in enumerate(subsections):
+                self.chunks.append({
+                    "id": chunk_id,
+                    "source": filename,
+                    "content": sub,
+                    "type": "Documento PDF",
+                    "position": f"Pág. {page_num + 1}" + (f", Parte {idx + 1}" if len(subsections) > 1 else "")
+                })
+                chunk_id += 1
+        return chunk_id
 
     def _process_dataframe(self, df: pd.DataFrame, filename: str, start_id: int) -> int:
         chunk_id = start_id

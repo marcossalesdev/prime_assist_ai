@@ -80,6 +80,15 @@ async def list_documents():
                     item_count = 0
                 doc_type = "Planilha Excel (.xlsx)"
                 unit = "registros/linhas"
+            elif ext == '.pdf':
+                try:
+                    from pypdf import PdfReader
+                    reader = PdfReader(filepath)
+                    item_count = len(reader.pages)
+                except Exception:
+                    item_count = 0
+                doc_type = "Documento PDF (.pdf)"
+                unit = "páginas"
             else:
                 doc_type = "Outro"
                 unit = "bytes"
@@ -101,10 +110,10 @@ async def list_documents():
 async def upload_document(file: UploadFile = File(...)):
     """Uploads a document to the data folder and re-indexes the RAG Engine."""
     ext = os.path.splitext(file.filename)[1].lower()
-    if ext not in ['.txt', '.csv', '.xlsx', '.xls']:
+    if ext not in ['.txt', '.csv', '.xlsx', '.xls', '.pdf']:
         raise HTTPException(
             status_code=400, 
-            detail="Tipo de arquivo não suportado. Envie apenas .txt, .csv ou .xlsx"
+            detail="Tipo de arquivo não suportado. Envie apenas .txt, .csv, .xlsx ou .pdf"
         )
         
     filepath = os.path.join(DATA_DIR, file.filename)
