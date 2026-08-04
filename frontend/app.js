@@ -34,14 +34,23 @@ const toggleApiKeyBtn = document.getElementById('toggle-api-key');
 const toast = document.getElementById('toast');
 
 // Initialize App
-document.addEventListener('DOMContentLoaded', () => {
+function startApp() {
     initNavigation();
     initSettings();
     initChat();
     initKB();
     checkAPIStatus();
     loadDocuments(); // Initial load of KB
-});
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startApp);
+} else {
+    startApp();
+}
+
+// Start splash screen immediately
+initSplashScreen();
 
 // Toast System
 function showToast(message, type = 'info') {
@@ -358,12 +367,42 @@ function parseMarkdown(text) {
     html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
     html = html.replace(/_(.*?)_/g, '<em>$1</em>');
     
-    // Lists
-    html = html.replace(/^\s*-\s+(.*?)$/gm, '<li>$1</li>');
-    html = html.replace(/(<li>.*?<\/li>)/s, '<ul>$1</ul>'); // wrap sequential list items in ul
+    // Process list blocks line-by-line
+    const lines = html.split('\n');
+    let inList = false;
+    const processedLines = [];
+    
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        const match = line.match(/^\s*-\s+(.*)$/);
+        
+        if (match) {
+            if (!inList) {
+                processedLines.push('<ul>');
+                inList = true;
+            }
+            processedLines.push(`<li>${match[1]}</li>`);
+        } else {
+            if (inList) {
+                processedLines.push('</ul>');
+                inList = false;
+            }
+            processedLines.push(line);
+        }
+    }
+    if (inList) {
+        processedLines.push('</ul>');
+    }
+    
+    html = processedLines.join('\n');
     
     // Line breaks
     html = html.replace(/\n/g, '<br>');
+    
+    // Clean up unnecessary <br> tags around lists to keep layout clean
+    html = html.replace(/<br><ul>/g, '<ul>').replace(/<\/ul><br>/g, '</ul>');
+    html = html.replace(/<br><li>/g, '<li>').replace(/<\/li><br>/g, '</li>');
+    html = html.replace(/<ul><br>/g, '<ul>').replace(/<br><\/ul>/g, '</ul>');
     
     return html;
 }
@@ -585,4 +624,17 @@ async function confirmDelete(filename) {
             showToast("Erro ao deletar documento.", "danger");
         }
     }
+}
+
+// Splash Screen Welcome Page logic
+function initSplashScreen() {
+    const splash = document.getElementById('splash-screen');
+    if (!splash) return;
+
+    setTimeout(() => {
+        splash.classList.add('fade-out');
+        setTimeout(() => {
+            splash.remove(); // Remove from DOM after transition
+        }, 1000);
+    }, 4000);
 }

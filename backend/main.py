@@ -207,7 +207,7 @@ async def chat_endpoint(request: ChatRequest):
     try:
         # Prepare model
         model = genai.GenerativeModel(
-            model_name="gemini-1.5-flash",
+            model_name="gemini-3.5-flash",
             system_instruction=system_instruction
         )
         
@@ -237,7 +237,7 @@ async def chat_endpoint(request: ChatRequest):
         # Fallback in case of system instruction or API error
         try:
             # Fallback prompt merging system prompt with user query
-            model_fallback = genai.GenerativeModel(model_name="gemini-1.5-flash")
+            model_fallback = genai.GenerativeModel(model_name="gemini-3.5-flash")
             full_prompt = f"{system_instruction}\n\nPergunta do Usuário: {request.message}"
             response = model_fallback.generate_content(full_prompt)
             return ChatResponse(
@@ -261,3 +261,5 @@ else:
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+# Force reload for CSV update
+
