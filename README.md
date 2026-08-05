@@ -101,14 +101,22 @@ O servidor e a interface frontend estarão disponíveis em: **`http://localhost:
 
 ## ❓ Casos de Uso e Exemplos de Consultas
 
-O PrimeAssist AI utiliza os documentos acima para responder a perguntas operacionais cotidianas com máxima precisão:
+O PrimeAssist AI utiliza a base de conhecimento integrada para responder com precisão e agilidade. Abaixo estão os principais exemplos de consultas recomendadas, divididos por área:
 
-* **Estoque e Preços**:
-  * *Pergunta*: "Qual é o preço do Aradois e quanto temos em estoque?"
-  * *Resposta*: O assistente consulta a tabela `Plan02_Controle_de_Estoque.csv` e retorna as quantidades exatas, lote e validade do produto.
-* **Regras de Troca e Devolução**:
-  * *Pergunta*: "Posso devolver uma insulina que comprei por engano?"
-  * *Resposta*: O assistente consulta o `Doc04_Procedimento_de_Troca_e_Devoluções.pdf` e esclarece que medicamentos termolábeis (como a Insulina Lantus, que exige refrigeração de 2°C a 8°C) não são elegíveis para devolução após saírem da loja.
-* **Orientação Farmacêutica**:
-  * *Pergunta*: "Posso tomar Amoxicilina junto com álcool?"
-  * *Resposta*: De acordo com o `Doc03_Procedimento_de_Atendimento_ao_Cliente.pdf`, o atendente está proibido de dar instruções técnicas sobre interações medicamentosas. O assistente orienta que o cliente deve ser encaminhado imediatamente para falar com o Farmacêutico Responsável.
+### 📄 Documentação
+* **Como realizar uma sangria de caixa?**
+* **Qual é a política de trocas da PrimePharma?**
+* **Qual é a missão da empresa?**
+* **O que fazer em caso de divergência de caixa?**
+
+### 📦 Estoque
+* **Qual é a validade do Omeprazol?**
+* **Quantas unidades de Paracetamol existem em estoque?**
+* **Qual é o lote do produto MED001?**
+* **Quais produtos pertencem à categoria Higiene?**
+
+### 💰 Vendas
+* **Qual foi o produto mais vendido nos últimos três meses?**
+* **Qual produto teve menor volume de vendas?**
+* **Qual é o estoque atual da Dipirona?**
+* **Quais produtos estão abaixo do estoque mínimo?**

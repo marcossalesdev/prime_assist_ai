@@ -223,9 +223,9 @@ function initChat() {
             `Olá! Eu sou o **PrimeAssist AI**, o assistente oficial de inteligência artificial da **PrimePharma**.\n` +
             `Consigo consultar documentos, políticas, tabelas de preço e estoque para responder suas dúvidas com precisão.\n\n` +
             `Como posso ajudar você hoje? Experimente perguntar algo como:\n` +
-            `- *\"Qual é a política de devolução de medicamentos termolábeis?\"*\n` +
-            `- *\"Tem Ritalina ou Amoxicilina em estoque? Quais os preços e se exige receita?\"*\n` +
-            `- *\"Como posso entrar em contato com o SAC ou Ouvidoria da empresa?\"*`
+            `- *\"Como realizar uma sangria de caixa?\"*\n` +
+            `- *\"Quantas unidades de Paracetamol existem em estoque?\"*\n` +
+            `- *\"Qual foi o produto mais vendido nos últimos três meses?\"*`
         );
         showToast("Conversa limpa.", "info");
     });
