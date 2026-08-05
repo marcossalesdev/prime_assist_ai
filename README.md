@@ -120,3 +120,59 @@ O PrimeAssist AI utiliza a base de conhecimento integrada para responder com pre
 * **Qual produto teve menor volume de vendas?**
 * **Qual é o estoque atual da Dipirona?**
 * **Quais produtos estão abaixo do estoque mínimo?**
+
+---
+
+## 💬 Exemplos de Respostas do Agente
+
+Para ilustrar o funcionamento prático do **PrimeAssist AI** e a formatação das suas respostas baseadas no contexto RAG (Retrieval-Augmented Generation) e na síntese da API do Gemini, veja alguns exemplos reais de interação:
+
+### 1. Consulta de Políticas Operacionais (Documentação)
+> **Usuário:** Como realizar uma sangria de caixa?
+>
+> **PrimeAssist AI:**
+> A sangria consiste na retirada parcial dos valores em dinheiro existentes no caixa para reduzir o volume de numerário disponível durante o expediente. Segundo as diretrizes da PrimePharma, o procedimento deve seguir estas etapas:
+> 
+> 1. **Solicitar autorização** do gerente da loja.
+> 2. **Registrar a operação** de sangria no sistema operacional do caixa.
+> 3. **Conferir o valor** que foi retirado fisicamente.
+> 4. **Acondicionar o numerário** retirado seguindo o procedimento interno específico da sua unidade.
+> 5. **Registrar a identificação** do colaborador responsável por realizar a operação.
+> 
+> **Fontes consultadas:**
+> * `Doc06_Procedimento_de_Caixa.pdf` (Código: POP-CX-001) - Seção 8 (*Sangria de Caixa*)
+
+---
+
+### 2. Consulta de Estoque e Lotes (Dados Operacionais)
+> **Usuário:** Qual é a validade do Omeprazol e quantas unidades temos em estoque?
+>
+> **PrimeAssist AI:**
+> Com base no controle de estoque atualizado da PrimePharma, temos duas versões do Omeprazol registradas na base:
+> 
+> 1. **Omeprazol 20 mg** (Medicamento de Referência, Código: `MED004`):
+>    * **Estoque Atual**: 110 caixas
+>    * **Lote**: `L250704`
+>    * **Validade**: 05/01/2028
+> 2. **Omeprazol Genérico 20 mg** (Código: `GEN003`):
+>    * **Estoque Atual**: 92 caixas
+>    * **Lote**: `G250703`
+>    * **Validade**: 15/01/2028
+> 
+> **Fontes consultadas:**
+> * `Plan02_Controle_de_Estoque.csv` - Registros de estoque de Medicamentos e Genéricos
+
+---
+
+### 3. Análise de Desempenho de Vendas (Dados Consolidados)
+> **Usuário:** Qual foi o produto mais vendido nos últimos três meses?
+>
+> **PrimeAssist AI:**
+> O produto mais vendido no consolidado de vendas dos meses de Abril, Maio e Junho de 2026 foi a **Vitamina C** (Código: `SUP001`), registrando um total de **462 unidades vendidas** (sendo 246 unidades em Maio e 216 em Junho).
+> 
+> Outros produtos que apresentaram desempenho de vendas de destaque no período foram:
+> * **Ibuprofeno Genérico 600 mg** (Código: `GEN006`): 460 unidades vendidas.
+> * **Hidroclorotiazida 25 mg** (Código: `MED013`): 458 unidades vendidas.
+> 
+> **Fontes consultadas:**
+> * `Plan01_Resumo_Vendas_Ultimos_3_Meses.csv` - Histórico consolidado de vendas do último trimestre
