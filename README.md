@@ -87,15 +87,51 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 3. Executar o Servidor FastAPI
-Execute o script principal:
+### 3. Executar a Aplicação
+
+Você pode executar o projeto de duas formas:
+
+#### Opção A: Interface Streamlit (Recomendada para Deploy na Nuvem)
+```bash
+streamlit run app.py
+```
+Acesse no navegador: **`http://localhost:8501`**.
+
+#### Opção B: Servidor FastAPI + Frontend SPA
 ```bash
 python backend/main.py
 ```
 O servidor e a interface frontend estarão disponíveis em: **`http://localhost:8000`**.
 
 > [!TIP]
-> Ao acessar o sistema pela primeira vez, vá na aba **Configurações** (ícone de engrenagem) e insira sua chave de API do Gemini. Ela ficará salva de forma segura no LocalStorage do seu próprio navegador.
+> Ao acessar o sistema pela primeira vez, insira sua chave de API do Gemini na barra lateral ou nas Configurações. Ela ficará salva de forma segura.
+
+---
+
+## 🚀 Deploy no Streamlit Community Cloud
+
+Para colocar o **PrimeAssist AI** no ar gratuitamente no **Streamlit Cloud**:
+
+1. **Suba as alterações para o seu repositório GitHub**:
+   ```bash
+   git add .
+   git commit -m "Adiciona suporte ao deploy no Streamlit Cloud"
+   git push origin main
+   ```
+2. **Acesse o Streamlit Community Cloud**:
+   * Entre em [share.streamlit.io](https://share.streamlit.io/) e faça login com sua conta do GitHub.
+3. **Crie um Novo App (`New App`)**:
+   * **Repository**: selecione `marcossalesdev/prime_assist_ai`
+   * **Branch**: `main`
+   * **Main file path**: `app.py` (ou `streamlit_app.py`)
+4. **Configurar a Chave de API nos Secrets (Opcional, mas recomendado)**:
+   * Clique em **Advanced settings...** > **Secrets**.
+   * Adicione sua chave do Google Gemini:
+     ```toml
+     GEMINI_API_KEY = "AIzaSy..."
+     ```
+5. **Clique em `Deploy!`** 🚀
+   * O Streamlit Cloud instalará as dependências do `requirements.txt` e iniciará o aplicativo com o motor RAG pronto para consultas!
 
 ---
 
