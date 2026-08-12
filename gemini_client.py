@@ -12,7 +12,7 @@ def list_gemini_models(api_key: str) -> Tuple[List[str], Optional[str]]:
         
     url = f"https://generativelanguage.googleapis.com/v1beta/models?key={api_key.strip()}"
     try:
-        resp = requests.get(url, timeout=10)
+        resp = requests.get(url, timeout=12)
         if resp.status_code == 200:
             data = resp.json()
             models = []
@@ -25,11 +25,22 @@ def list_gemini_models(api_key: str) -> Tuple[List[str], Optional[str]]:
                         models.append(name)
             
             # Sort with newest/fastest first
-            priority = ["gemini-2.0-flash", "gemini-1.5-flash-latest", "gemini-1.5-flash", "gemini-1.5-flash-8b", "gemini-2.0-flash-lite", "gemini-1.5-pro", "gemini-pro"]
+            priority = [
+                "gemini-2.5-flash",
+                "gemini-2.0-flash",
+                "gemini-1.5-flash",
+                "gemini-1.5-flash-latest",
+                "gemini-1.5-flash-8b",
+                "gemini-2.0-flash-lite",
+                "gemini-2.5-pro",
+                "gemini-1.5-pro",
+                "gemini-1.5-pro-latest",
+                "gemini-pro"
+            ]
             sorted_models = []
             for p in priority:
                 for m in models:
-                    if p in m and m not in sorted_models:
+                    if (m == p or m.startswith(p)) and m not in sorted_models:
                         sorted_models.append(m)
             for m in models:
                 if m not in sorted_models:
@@ -54,7 +65,7 @@ def generate_gemini_content(
     history: Optional[List[Dict[str, str]]] = None
 ) -> Tuple[Optional[str], Optional[str]]:
     """
-    Generates content using the direct Gemini REST API with fallback models.
+    Generates content using the direct Gemini REST API with intelligent fallback models.
     Returns (response_text, error_message).
     """
     if not api_key:
@@ -62,12 +73,13 @@ def generate_gemini_content(
         
     api_key = api_key.strip()
     
-    # List of candidate models to try
+    # List of candidate models to try starting with requested model
     candidate_models = [model_name]
     fallback_chain = [
         "gemini-2.0-flash",
-        "gemini-1.5-flash-latest",
         "gemini-1.5-flash",
+        "gemini-1.5-flash-latest",
+        "gemini-2.5-flash",
         "gemini-1.5-flash-8b",
         "gemini-2.0-flash-lite-preview-02-05",
         "gemini-1.5-pro-latest",
@@ -93,12 +105,11 @@ def generate_gemini_content(
                     "parts": [{"text": h.get("content", "")}]
                 })
         
-        # Current message with system instruction merged or separated
-        user_content = prompt
+        # Merge system instruction with prompt to maximize compatibility across all model versions
         if system_instruction:
-            full_text = f"{system_instruction}\n\nPergunta do Usuário:\n{user_content}"
+            full_text = f"{system_instruction}\n\nPergunta do Usuário:\n{prompt}"
         else:
-            full_text = user_content
+            full_text = prompt
             
         contents.append({
             "role": "user",
@@ -121,7 +132,7 @@ def generate_gemini_content(
                     url,
                     headers={"Content-Type": "application/json"},
                     json=payload,
-                    timeout=25
+                    timeout=30
                 )
                 if resp.status_code == 200:
                     data = resp.json()
@@ -134,10 +145,12 @@ def generate_gemini_content(
                 else:
                     try:
                         err_json = resp.json()
-                        last_error = f"[{api_version}/{clean_model}] {err_json.get('error', {}).get('message', resp.text)}"
+                        err_msg = err_json.get("error", {}).get("message", resp.text)
+                        last_error = f"[{api_version}/{clean_model}] {err_msg}"
                     except Exception:
                         last_error = f"[{api_version}/{clean_model}] HTTP {resp.status_code}: {resp.text}"
             except Exception as e:
                 last_error = f"[{api_version}/{clean_model}] Exceção: {str(e)}"
                 
-    return None, f"Falha em todos os modelos testados. Último erro: {last_error}"
+    return None, f"Falha na comunicação com os modelos Gemini. Último erro: {last_error}"
+

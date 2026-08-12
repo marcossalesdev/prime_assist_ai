@@ -2,8 +2,8 @@ import os
 import shutil
 import streamlit as st
 import pandas as pd
-import google.generativeai as genai
 from backend.rag import RAGEngine
+from gemini_client import list_gemini_models, generate_gemini_content
 
 # Page Configuration
 st.set_page_config(
@@ -106,12 +106,45 @@ with st.sidebar:
     else:
         active_key = current_key
 
+    # Dynamic model discovery
+    default_models = [
+        "gemini-2.0-flash",
+        "gemini-1.5-flash",
+        "gemini-1.5-flash-latest",
+        "gemini-2.5-flash",
+        "gemini-1.5-flash-8b",
+        "gemini-1.5-pro",
+        "gemini-1.5-pro-latest",
+        "gemini-pro"
+    ]
+    
+    available_models = default_models
+    if active_key:
+        models_found, _ = list_gemini_models(active_key)
+        if models_found:
+            available_models = models_found
+
+    # Test Key button
+    if st.button("🧪 Testar Conexão da Chave"):
+        if not active_key:
+            st.warning("Insira uma chave de API antes de testar.")
+        else:
+            with st.spinner("Testando chave com a API Google Gemini..."):
+                test_models, err = list_gemini_models(active_key)
+                if test_models:
+                    st.success(f"✅ Chave válida e ativa! ({len(test_models)} modelos disponíveis)")
+                    with st.expander("Modelos disponíveis para sua chave"):
+                        for m in test_models:
+                            st.caption(f"• `{m}`")
+                else:
+                    st.error(f"❌ Falha na validação da chave:\n\n{err}")
+
     # Model Selection
     selected_model = st.selectbox(
         "Modelo de IA",
-        options=["gemini-1.5-flash", "gemini-2.0-flash", "gemini-1.5-pro"],
+        options=available_models,
         index=0,
-        help="O Gemini 1.5/2.0 Flash é rápido e ideal para perguntas sobre documentos e planilhas."
+        help="Modelos disponíveis para a sua chave de API com fallback automático."
     )
 
     st.divider()
@@ -247,54 +280,47 @@ if prompt:
             })
         else:
             with st.spinner("Consultando base de conhecimento e gerando resposta..."):
-                try:
-                    # Configure Gemini
-                    genai.configure(api_key=active_key)
-                    
-                    # Prepare context
-                    context_text = ""
-                    for idx, src in enumerate(sources):
-                        context_text += f"Documento [{idx + 1}]: {src['source']} ({src['position']})\nConteúdo: {src['content']}\n\n"
+                # Prepare context
+                context_text = ""
+                for idx, src in enumerate(sources):
+                    context_text += f"Documento [{idx + 1}]: {src['source']} ({src['position']})\nConteúdo: {src['content']}\n\n"
 
-                    # System instruction
-                    system_instruction = (
-                        "Você é o PrimeAssist AI, o assistente de inteligência artificial oficial da empresa PrimePharma.\n"
-                        "Sua principal diretriz é responder à pergunta do usuário baseando-se EXCLUSIVAMENTE nas "
-                        "informações contidas no Contexto Oficial fornecido abaixo. As informações do Contexto vêm de "
-                        "documentos e planilhas oficiais da empresa.\n\n"
-                        "Regras cruciais:\n"
-                        "1. Responda apenas com base no Contexto Oficial fornecido. Se a resposta para a pergunta não estiver presente "
-                        "no Contexto, diga exatamente: 'Desculpe, não encontrei essa informação nos documentos oficiais da PrimePharma.'\n"
-                        "2. NUNCA utilize conhecimento externo, suposições ou dados fora do contexto. Não adivinhe dados de estoque, preços ou regras.\n"
-                        "3. Mantenha um tom profissional, prestativo e corporativo.\n"
-                        "4. Não mencione explicitamente termos técnicos de RAG como 'de acordo com o contexto fornecido' ou 'baseado no documento'. "
-                        "Responda diretamente e com precisão.\n"
-                        "5. Formate a resposta usando Markdown de forma limpa (tabelas, listas, negrito).\n\n"
-                        "CONTEXTO OFICIAL:\n"
-                        "----------------------\n"
-                        f"{context_text if context_text else 'NENHUM DOCUMENTO OU PLANILHA ENCONTRADO NA BASE DE DADOS.'}\n"
-                        "----------------------\n"
-                    )
+                # System instruction
+                system_instruction = (
+                    "Você é o PrimeAssist AI, o assistente de inteligência artificial oficial da empresa PrimePharma.\n"
+                    "Sua principal diretriz é responder à pergunta do usuário baseando-se EXCLUSIVAMENTE nas "
+                    "informações contidas no Contexto Oficial fornecido abaixo. As informações do Contexto vêm de "
+                    "documentos e planilhas oficiais da empresa.\n\n"
+                    "Regras cruciais:\n"
+                    "1. Responda apenas com base no Contexto Oficial fornecido. Se a resposta para a pergunta não estiver presente "
+                    "no Contexto, diga exatamente: 'Desculpe, não encontrei essa informação nos documentos oficiais da PrimePharma.'\n"
+                    "2. NUNCA utilize conhecimento externo, suposições ou dados fora do contexto. Não adivinhe dados de estoque, preços ou regras.\n"
+                    "3. Mantenha um tom profissional, prestativo e corporativo.\n"
+                    "4. Não mencione explicitamente termos técnicos de RAG como 'de acordo com o contexto fornecido' ou 'baseado no documento'. "
+                    "Responda diretamente e com precisão.\n"
+                    "5. Formate a resposta usando Markdown de forma limpa (tabelas, listas, negrito).\n\n"
+                    "CONTEXTO OFICIAL:\n"
+                    "----------------------\n"
+                    f"{context_text if context_text else 'NENHUM DOCUMENTO OU PLANILHA ENCONTRADO NA BASE DE DADOS.'}\n"
+                    "----------------------\n"
+                )
 
-                    model = genai.GenerativeModel(
-                        model_name=selected_model,
-                        system_instruction=system_instruction
-                    )
+                # History
+                chat_history = [
+                    {"role": m["role"], "content": m["content"]}
+                    for m in st.session_state.messages[:-1]
+                ]
 
-                    # Build history
-                    formatted_history = []
-                    for m in st.session_state.messages[:-1]:
-                        if m["role"] in ["user", "assistant"]:
-                            role = "user" if m["role"] == "user" else "model"
-                            formatted_history.append({
-                                "role": role,
-                                "parts": [m["content"]]
-                            })
+                # Generate content with robust fallback
+                answer_text, err = generate_gemini_content(
+                    api_key=active_key,
+                    prompt=prompt,
+                    system_instruction=system_instruction,
+                    model_name=selected_model,
+                    history=chat_history
+                )
 
-                    chat = model.start_chat(history=formatted_history)
-                    response = chat.send_message(prompt)
-                    answer_text = response.text
-
+                if answer_text:
                     st.markdown(answer_text)
                     if sources:
                         with st.expander("📚 Fontes consultadas na resposta"):
@@ -307,9 +333,14 @@ if prompt:
                         "content": answer_text,
                         "sources": sources
                     })
-
-                except Exception as e:
-                    err_msg = f"❌ **Erro ao processar consulta:** {str(e)}\n\nVerifique se sua chave de API é válida e possui cotas ativas no Google AI Studio."
+                else:
+                    err_msg = (
+                        f"❌ **Erro ao processar consulta:** {err}\n\n"
+                        "**Dicas para resolver:**\n"
+                        "1. Certifique-se de que a chave foi criada no **[Google AI Studio](https://aistudio.google.com/)** (Get API Key).\n"
+                        "2. Use o botão **'🧪 Testar Conexão da Chave'** na barra lateral para diagnosticar a chave.\n"
+                        "3. Se você criou a chave no Google Cloud Console comum, certifique-se de habilitar a **Generative Language API** no seu projeto."
+                    )
                     st.error(err_msg)
                     st.session_state.messages.append({
                         "role": "assistant",

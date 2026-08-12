@@ -109,9 +109,11 @@ with st.sidebar:
     # Dynamic model discovery
     default_models = [
         "gemini-2.0-flash",
-        "gemini-1.5-flash-latest",
         "gemini-1.5-flash",
+        "gemini-1.5-flash-latest",
+        "gemini-2.5-flash",
         "gemini-1.5-flash-8b",
+        "gemini-1.5-pro",
         "gemini-1.5-pro-latest",
         "gemini-pro"
     ]
@@ -142,7 +144,7 @@ with st.sidebar:
         "Modelo de IA",
         options=available_models,
         index=0,
-        help="Modelos disponíveis para a sua chave de API."
+        help="Modelos disponíveis para a sua chave de API com fallback automático."
     )
 
     st.divider()
@@ -309,7 +311,7 @@ if prompt:
                     for m in st.session_state.messages[:-1]
                 ]
 
-                # Generate content
+                # Generate content with robust fallback
                 answer_text, err = generate_gemini_content(
                     api_key=active_key,
                     prompt=prompt,

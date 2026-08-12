@@ -207,47 +207,35 @@ async def chat_endpoint(request: ChatRequest):
         "----------------------\n"
     )
 
-    formatted_history = []
-    for msg in request.history:
-        role = "user" if msg.role == "user" else "model"
-        formatted_history.append({
-            "role": role,
-            "parts": [msg.content]
-        })
+    formatted_history = [
+        {"role": msg.role, "content": msg.content}
+        for msg in request.history
+    ]
 
-    candidate_models = ["gemini-1.5-flash", "gemini-1.5-flash-latest", "gemini-2.0-flash", "gemini-1.5-pro", "gemini-pro"]
-    last_err = None
+    try:
+        from gemini_client import generate_gemini_content
+    except ImportError:
+        import sys
+        sys.path.append(os.path.dirname(BASE_DIR))
+        from gemini_client import generate_gemini_content
 
-    for model_name in candidate_models:
-        try:
-            model = genai.GenerativeModel(
-                model_name=model_name,
-                system_instruction=system_instruction
-            )
-            chat = model.start_chat(history=formatted_history)
-            response = chat.send_message(request.message)
-            return ChatResponse(
-                answer=response.text,
-                sources=sources,
-                success=True
-            )
-        except Exception as e:
-            last_err = e
-            try:
-                model_fallback = genai.GenerativeModel(model_name=model_name)
-                full_prompt = f"{system_instruction}\n\nPergunta do Usuário: {request.message}"
-                response = model_fallback.generate_content(full_prompt)
-                return ChatResponse(
-                    answer=response.text,
-                    sources=sources,
-                    success=True
-                )
-            except Exception as err:
-                last_err = err
-                continue
+    answer_text, err = generate_gemini_content(
+        api_key=api_key,
+        prompt=request.message,
+        system_instruction=system_instruction,
+        model_name="gemini-2.0-flash",
+        history=formatted_history
+    )
+
+    if answer_text:
+        return ChatResponse(
+            answer=answer_text,
+            sources=sources,
+            success=True
+        )
 
     return ChatResponse(
-        answer=f"Erro ao gerar resposta com o Gemini: {str(last_err)}. Verifique se sua chave de API possui cotas no Google AI Studio.",
+        answer=f"Erro ao gerar resposta com o Gemini: {err}. Verifique se sua chave de API possui cotas ativas no Google AI Studio.",
         sources=sources,
         success=False
     )
