@@ -49,8 +49,6 @@ if (document.readyState === 'loading') {
     startApp();
 }
 
-// Start splash screen immediately
-initSplashScreen();
 
 // Toast System
 function showToast(message, type = 'info') {
@@ -626,15 +624,3 @@ async function confirmDelete(filename) {
     }
 }
 
-// Splash Screen Welcome Page logic
-function initSplashScreen() {
-    const splash = document.getElementById('splash-screen');
-    if (!splash) return;
-
-    setTimeout(() => {
-        splash.classList.add('fade-out');
-        setTimeout(() => {
-            splash.remove(); // Remove from DOM after transition
-        }, 1000);
-    }, 4000);
-}

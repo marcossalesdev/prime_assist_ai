@@ -212,3 +212,31 @@ Para ilustrar o funcionamento prático do **PrimeAssist AI** e a formatação da
 > 
 > **Fontes consultadas:**
 > * `Plan01_Resumo_Vendas_Ultimos_3_Meses.csv` - Histórico consolidado de vendas do último trimestre
+
+---
+
+## 🎓 Contexto do Projeto e Aviso Acadêmico
+
+> [!NOTE]
+> **Aviso de Fins Educacionais e Demonstrativos**  
+> A **PrimePharma** é uma empresa fictícia desenvolvida com o apoio de Inteligência Artificial, como parte do projeto de conclusão do curso **Tech AI Builder**.
+
+Embora a empresa e seus dados sejam fictícios, o projeto foi construído com base em problemas, necessidades e desafios encontrados em cenários empresariais reais, buscando demonstrar como tecnologias de Inteligência Artificial podem ser utilizadas para propor soluções práticas, aplicáveis e alinhadas às necessidades de uma organização.
+
+Durante o desenvolvimento, foram considerados processos e situações comuns ao ambiente corporativo, como organização e consulta de informações, gestão de estoque, análise de dados, apoio à tomada de decisões e automação de tarefas, utilizando recursos de IA para tornar esses processos mais eficientes.
+
+O projeto tem como principal objetivo demonstrar, de forma prática, a aplicação dos conhecimentos adquiridos ao longo do curso, integrando **Inteligência Artificial**, **agentes inteligentes**, **processamento de informações**, **automação** e **desenvolvimento de soluções tecnológicas** em um cenário empresarial simulado.
+
+Dessa forma, a PrimePharma não representa uma empresa real, mas utiliza problemas reais como referência e soluções tecnológicas reais como base para a construção do projeto, aproximando a experiência acadêmica de uma aplicação profissional.
+
+Todo o conteúdo, documentos, dados e informações apresentados foram elaborados ou adaptados para fins educacionais, demonstrativos e acadêmicos.
+
+---
+
+### 📋 Informações do Projeto
+
+* **Curso:** Tech AI Builder
+* **Projeto:** PrimePharma / PrimeAssist AI
+* **Desenvolvimento e Validação:** Marcos Sales
+* **Finalidade:** Educacional e Demonstrativa (Projeto de Conclusão de Curso)
+
