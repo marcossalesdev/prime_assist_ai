@@ -17,7 +17,6 @@ def list_gemini_models(api_key: str) -> Tuple[List[str], Optional[str]]:
             data = resp.json()
             models = []
             for m in data.get("models", []):
-                # Check if supports generateContent
                 methods = m.get("supportedGenerationMethods", [])
                 if "generateContent" in methods:
                     name = m.get("name", "").replace("models/", "")
@@ -26,16 +25,15 @@ def list_gemini_models(api_key: str) -> Tuple[List[str], Optional[str]]:
             
             # Sort with newest/fastest first
             priority = [
-                "gemini-2.5-flash",
                 "gemini-2.0-flash",
                 "gemini-1.5-flash",
                 "gemini-1.5-flash-latest",
                 "gemini-1.5-flash-8b",
+                "gemini-2.5-flash",
                 "gemini-2.0-flash-lite",
-                "gemini-2.5-pro",
                 "gemini-1.5-pro",
                 "gemini-1.5-pro-latest",
-                "gemini-pro"
+                "gemini-2.5-pro"
             ]
             sorted_models = []
             for p in priority:
@@ -57,6 +55,59 @@ def list_gemini_models(api_key: str) -> Tuple[List[str], Optional[str]]:
     except Exception as e:
         return [], f"Erro de conexão com a API do Google: {str(e)}"
 
+
+def build_sanitized_contents(
+    history: Optional[List[Dict[str, str]]],
+    prompt: str,
+    system_instruction: str = ""
+) -> List[Dict[str, Any]]:
+    """
+    Builds a strictly valid Gemini multiturn 'contents' array:
+    - Must start with 'user' role.
+    - Must alternate strictly between 'user' and 'model'.
+    - Merges consecutive turns of the same role.
+    - Embeds system instruction in the first user turn or prompt.
+    """
+    user_prompt = f"{system_instruction}\n\nPergunta do Usuário:\n{prompt}" if system_instruction else prompt
+    
+    turns = []
+    if history:
+        for h in history:
+            role_raw = str(h.get("role", "")).lower()
+            role = "user" if role_raw in ["user", "human"] else "model"
+            text = str(h.get("content", "")).strip()
+            if text:
+                turns.append({"role": role, "text": text})
+                
+    # Gemini requires first turn to be 'user'. Drop any leading 'model' messages (e.g. initial greeting).
+    first_user_idx = -1
+    for i, turn in enumerate(turns):
+        if turn["role"] == "user":
+            first_user_idx = i
+            break
+            
+    valid_turns: List[Dict[str, str]] = []
+    if first_user_idx != -1:
+        for turn in turns[first_user_idx:]:
+            if not valid_turns:
+                valid_turns.append({"role": turn["role"], "text": turn["text"]})
+            else:
+                if valid_turns[-1]["role"] == turn["role"]:
+                    valid_turns[-1]["text"] += "\n\n" + turn["text"]
+                else:
+                    valid_turns.append({"role": turn["role"], "text": turn["text"]})
+                    
+    # Append the current prompt
+    if not valid_turns:
+        valid_turns.append({"role": "user", "text": user_prompt})
+    elif valid_turns[-1]["role"] == "user":
+        valid_turns[-1]["text"] += "\n\n" + user_prompt
+    else:
+        valid_turns.append({"role": "user", "text": user_prompt})
+        
+    return [{"role": t["role"], "parts": [{"text": t["text"]}]} for t in valid_turns]
+
+
 def generate_gemini_content(
     api_key: str,
     prompt: str,
@@ -73,58 +124,35 @@ def generate_gemini_content(
         
     api_key = api_key.strip()
     
-    # List of candidate models to try starting with requested model
+    # Priority list of models to try
     candidate_models = [model_name]
     fallback_chain = [
         "gemini-2.0-flash",
         "gemini-1.5-flash",
         "gemini-1.5-flash-latest",
-        "gemini-2.5-flash",
         "gemini-1.5-flash-8b",
-        "gemini-2.0-flash-lite-preview-02-05",
-        "gemini-1.5-pro-latest",
+        "gemini-2.5-flash",
         "gemini-1.5-pro",
-        "gemini-pro"
+        "gemini-1.5-pro-latest"
     ]
     for fb in fallback_chain:
         if fb not in candidate_models:
             candidate_models.append(fb)
             
+    contents = build_sanitized_contents(history, prompt, system_instruction)
+    payload = {
+        "contents": contents,
+        "generationConfig": {
+            "temperature": 0.2,
+            "maxOutputTokens": 2048
+        }
+    }
+    
     last_error = ""
     
     for candidate in candidate_models:
         clean_model = candidate.replace("models/", "")
         
-        # Build contents array
-        contents = []
-        if history:
-            for h in history:
-                role = "user" if h.get("role") in ["user", "human"] else "model"
-                contents.append({
-                    "role": role,
-                    "parts": [{"text": h.get("content", "")}]
-                })
-        
-        # Merge system instruction with prompt to maximize compatibility across all model versions
-        if system_instruction:
-            full_text = f"{system_instruction}\n\nPergunta do Usuário:\n{prompt}"
-        else:
-            full_text = prompt
-            
-        contents.append({
-            "role": "user",
-            "parts": [{"text": full_text}]
-        })
-        
-        payload = {
-            "contents": contents,
-            "generationConfig": {
-                "temperature": 0.2,
-                "maxOutputTokens": 2048
-            }
-        }
-        
-        # Try v1beta endpoint first, then v1
         for api_version in ["v1beta", "v1"]:
             url = f"https://generativelanguage.googleapis.com/{api_version}/models/{clean_model}:generateContent?key={api_key}"
             try:
@@ -141,16 +169,25 @@ def generate_gemini_content(
                         parts = candidates[0].get("content", {}).get("parts", [])
                         if parts and "text" in parts[0]:
                             return parts[0]["text"], None
-                    return "Não foi possível extrair a resposta do modelo.", None
+                    return "Não foi possível extrair o texto da resposta do modelo.", None
                 else:
                     try:
                         err_json = resp.json()
                         err_msg = err_json.get("error", {}).get("message", resp.text)
-                        last_error = f"[{api_version}/{clean_model}] {err_msg}"
+                        err_status = err_json.get("error", {}).get("status", "")
                     except Exception:
-                        last_error = f"[{api_version}/{clean_model}] HTTP {resp.status_code}: {resp.text}"
+                        err_msg = resp.text
+                        err_status = ""
+                    
+                    last_error = f"[{api_version}/{clean_model}] {err_msg}"
+                    
+                    # Stop early on critical authentication or billing/quota errors that affect all models
+                    if resp.status_code in [400, 401, 403, 429]:
+                        if any(term in err_msg.lower() for term in ["api key not valid", "api_key_invalid", "permission_denied", "quota", "resource_exhausted", "billing"]):
+                            return None, f"Erro na API do Google Gemini: {err_msg}"
             except Exception as e:
                 last_error = f"[{api_version}/{clean_model}] Exceção: {str(e)}"
                 
     return None, f"Falha na comunicação com os modelos Gemini. Último erro: {last_error}"
+
 
