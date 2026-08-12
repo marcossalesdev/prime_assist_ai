@@ -106,12 +106,47 @@ with st.sidebar:
     else:
         active_key = current_key
 
+    # Available models list with dynamic discovery
+    default_models = [
+        "gemini-1.5-flash",
+        "gemini-1.5-flash-latest",
+        "gemini-2.0-flash",
+        "gemini-2.0-flash-exp",
+        "gemini-1.5-pro",
+        "gemini-1.5-pro-latest",
+        "gemini-pro"
+    ]
+    
+    # Try dynamic model discovery if API key is present
+    available_models = default_models
+    if active_key:
+        try:
+            genai.configure(api_key=active_key)
+            discovered = []
+            for m in genai.list_models():
+                if "generateContent" in m.supported_generation_methods:
+                    # Clean name: remove 'models/' prefix for cleaner UI
+                    clean_name = m.name.replace("models/", "")
+                    discovered.append(clean_name)
+            if discovered:
+                # Prioritize flash models at the top
+                available_models = sorted(
+                    discovered,
+                    key=lambda x: (
+                        0 if "1.5-flash" in x else
+                        1 if "2.0-flash" in x else
+                        2 if "pro" in x else 3
+                    )
+                )
+        except Exception:
+            available_models = default_models
+
     # Model Selection
     selected_model = st.selectbox(
         "Modelo de IA",
-        options=["gemini-1.5-flash", "gemini-2.0-flash", "gemini-1.5-pro"],
+        options=available_models,
         index=0,
-        help="O Gemini 1.5/2.0 Flash é rápido e ideal para perguntas sobre documentos e planilhas."
+        help="Modelos disponíveis para a sua chave de API."
     )
 
     st.divider()
@@ -276,10 +311,14 @@ if prompt:
                         "----------------------\n"
                     )
 
-                    model = genai.GenerativeModel(
-                        model_name=selected_model,
-                        system_instruction=system_instruction
-                    )
+                    # List of candidate models to try
+                    candidate_models = [selected_model]
+                    for fallback in ["gemini-1.5-flash-latest", "gemini-2.0-flash", "gemini-1.5-flash", "gemini-1.5-pro-latest", "gemini-pro"]:
+                        if fallback not in candidate_models:
+                            candidate_models.append(fallback)
+
+                    response_text = None
+                    last_error = None
 
                     # Build history
                     formatted_history = []
@@ -291,11 +330,34 @@ if prompt:
                                 "parts": [m["content"]]
                             })
 
-                    chat = model.start_chat(history=formatted_history)
-                    response = chat.send_message(prompt)
-                    answer_text = response.text
+                    for model_name in candidate_models:
+                        try:
+                            # 1. Try with system instruction
+                            model = genai.GenerativeModel(
+                                model_name=model_name,
+                                system_instruction=system_instruction
+                            )
+                            chat = model.start_chat(history=formatted_history)
+                            response = chat.send_message(prompt)
+                            response_text = response.text
+                            break
+                        except Exception as ex_model:
+                            last_error = ex_model
+                            try:
+                                # 2. Try prompt merging without system_instruction argument
+                                model_fallback = genai.GenerativeModel(model_name=model_name)
+                                full_prompt = f"{system_instruction}\n\nPergunta do Usuário: {prompt}"
+                                response = model_fallback.generate_content(full_prompt)
+                                response_text = response.text
+                                break
+                            except Exception as ex_fallback:
+                                last_error = ex_fallback
+                                continue
 
-                    st.markdown(answer_text)
+                    if response_text is None:
+                        raise last_error if last_error else Exception("Nenhum modelo compatível respondeu.")
+
+                    st.markdown(response_text)
                     if sources:
                         with st.expander("📚 Fontes consultadas na resposta"):
                             for idx, src in enumerate(sources):
@@ -304,12 +366,12 @@ if prompt:
 
                     st.session_state.messages.append({
                         "role": "assistant",
-                        "content": answer_text,
+                        "content": response_text,
                         "sources": sources
                     })
 
                 except Exception as e:
-                    err_msg = f"❌ **Erro ao processar consulta:** {str(e)}\n\nVerifique se sua chave de API é válida e possui cotas ativas no Google AI Studio."
+                    err_msg = f"❌ **Erro ao processar consulta:** {str(e)}\n\nVerifique se sua chave de API é válida e possui cotas ativas no Google AI Studio (aistudio.google.com)."
                     st.error(err_msg)
                     st.session_state.messages.append({
                         "role": "assistant",

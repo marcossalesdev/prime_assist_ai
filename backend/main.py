@@ -8,7 +8,10 @@ from pydantic import BaseModel
 from typing import List, Optional
 import google.generativeai as genai
 
-from rag import RAGEngine
+try:
+    from backend.rag import RAGEngine
+except ImportError:
+    from rag import RAGEngine
 
 app = FastAPI(title="PrimeAssist AI API")
 
@@ -204,53 +207,50 @@ async def chat_endpoint(request: ChatRequest):
         "----------------------\n"
     )
 
-    try:
-        # Prepare model
-        model = genai.GenerativeModel(
-            model_name="gemini-3.5-flash",
-            system_instruction=system_instruction
-        )
-        
-        # Format chat history for Gemini SDK
-        # Gemini roles: "user" and "model"
-        formatted_history = []
-        for msg in request.history:
-            # Map roles appropriately
-            role = "user" if msg.role == "user" else "model"
-            formatted_history.append({
-                "role": role,
-                "parts": [msg.content]
-            })
-            
-        # Start a chat session with history
-        chat = model.start_chat(history=formatted_history)
-        
-        # Send query
-        response = chat.send_message(request.message)
-        
-        return ChatResponse(
-            answer=response.text,
-            sources=sources,
-            success=True
-        )
-    except Exception as e:
-        # Fallback in case of system instruction or API error
+    formatted_history = []
+    for msg in request.history:
+        role = "user" if msg.role == "user" else "model"
+        formatted_history.append({
+            "role": role,
+            "parts": [msg.content]
+        })
+
+    candidate_models = ["gemini-1.5-flash", "gemini-1.5-flash-latest", "gemini-2.0-flash", "gemini-1.5-pro", "gemini-pro"]
+    last_err = None
+
+    for model_name in candidate_models:
         try:
-            # Fallback prompt merging system prompt with user query
-            model_fallback = genai.GenerativeModel(model_name="gemini-3.5-flash")
-            full_prompt = f"{system_instruction}\n\nPergunta do Usuário: {request.message}"
-            response = model_fallback.generate_content(full_prompt)
+            model = genai.GenerativeModel(
+                model_name=model_name,
+                system_instruction=system_instruction
+            )
+            chat = model.start_chat(history=formatted_history)
+            response = chat.send_message(request.message)
             return ChatResponse(
                 answer=response.text,
                 sources=sources,
                 success=True
             )
-        except Exception as err:
-            return ChatResponse(
-                answer=f"Erro ao gerar resposta com o Gemini: {str(err)}. Por favor, verifique sua chave de API e conexão.",
-                sources=sources,
-                success=False
-            )
+        except Exception as e:
+            last_err = e
+            try:
+                model_fallback = genai.GenerativeModel(model_name=model_name)
+                full_prompt = f"{system_instruction}\n\nPergunta do Usuário: {request.message}"
+                response = model_fallback.generate_content(full_prompt)
+                return ChatResponse(
+                    answer=response.text,
+                    sources=sources,
+                    success=True
+                )
+            except Exception as err:
+                last_err = err
+                continue
+
+    return ChatResponse(
+        answer=f"Erro ao gerar resposta com o Gemini: {str(last_err)}. Verifique se sua chave de API possui cotas no Google AI Studio.",
+        sources=sources,
+        success=False
+    )
 
 # Mount the static files folder (frontend)
 FRONTEND_DIR = os.path.join(os.path.dirname(BASE_DIR), "frontend")
