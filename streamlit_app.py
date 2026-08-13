@@ -44,24 +44,45 @@ st.markdown("""
         margin-top: 8px;
         font-size: 0.85rem;
     }
-    /* Estilo do botao Limpar Conversa abaixo da caixa de pergunta */
+    /* Posiciona a caixa de pergunta com respiro inferior */
+    div[data-testid="stChatInput"] {
+        margin-bottom: 22px !important;
+    }
+    /* Fixa o botao Limpar Conversa exatamente abaixo da caixa de pergunta */
     div.st-key-btn_clear_chat {
-        display: flex;
-        justify-content: center;
-        margin: 6px auto 14px auto;
+        position: fixed !important;
+        bottom: 3px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        z-index: 999999 !important;
+        display: flex !important;
+        justify-content: center !important;
+        width: auto !important;
+    }
+    @media (min-width: 768px) {
+        div.st-key-btn_clear_chat {
+            left: calc(50% + 140px) !important;
+        }
     }
     div.st-key-btn_clear_chat button {
-        border-radius: 20px;
-        padding: 4px 18px;
-        font-size: 0.82rem;
-        border: 1px solid rgba(128, 128, 128, 0.25);
-        background: rgba(255, 255, 255, 0.04);
-        transition: all 0.2s ease;
+        border-radius: 14px !important;
+        padding: 2px 14px !important;
+        font-size: 0.76rem !important;
+        height: auto !important;
+        min-height: unset !important;
+        line-height: 1.3 !important;
+        border: 1px solid rgba(148, 163, 184, 0.25) !important;
+        background: rgba(15, 23, 42, 0.85) !important;
+        color: #94a3b8 !important;
+        backdrop-filter: blur(8px) !important;
+        transition: all 0.2s ease !important;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3) !important;
     }
     div.st-key-btn_clear_chat button:hover {
-        border-color: #ef4444;
-        color: #ef4444;
-        background: rgba(239, 68, 68, 0.08);
+        border-color: #ef4444 !important;
+        color: #ef4444 !important;
+        background: rgba(239, 68, 68, 0.15) !important;
+        transform: scale(1.02) !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -365,11 +386,10 @@ if prompt:
                         "sources": sources
                     })
 
-# Botao Limpar Conversa posicionado abaixo da caixa de pergunta
-col_l, col_btn, col_r = st.columns([0.38, 0.24, 0.38])
-with col_btn:
-    if st.button("🗑️ Limpar Conversa", key="btn_clear_chat", use_container_width=True, help="Reiniciar histórico de mensagens"):
-        st.session_state.messages = [dict(m) for m in DEFAULT_MESSAGES]
-        st.rerun()
+# Botao Limpar Conversa posicionado fixo no rodape, abaixo da caixa de pergunta
+if st.button("🗑️ Limpar Conversa", key="btn_clear_chat", help="Reiniciar histórico de mensagens"):
+    st.session_state.messages = [dict(m) for m in DEFAULT_MESSAGES]
+    st.rerun()
+
 
 
