@@ -251,6 +251,7 @@ if "messages" not in st.session_state or not st.session_state.messages:
     st.session_state.messages = [dict(m) for m in DEFAULT_MESSAGES]
 
 # Example Queries Section
+# Example Queries Section
 with st.expander("💡 Sugestões de perguntas rápidas por categoria", expanded=False):
     tab1, tab2, tab3 = st.tabs(["📄 Documentação & Procedimentos", "📦 Estoque & Produtos", "📈 Vendas & Desempenho"])
     
@@ -264,24 +265,33 @@ with st.expander("💡 Sugestões de perguntas rápidas por categoria", expanded
         st.button("Quais são as diretrizes de conduta e atendimento ao cliente?", on_click=set_query, args=("Quais são as principais diretrizes de atendimento ao cliente da PrimePharma?",), key="ex4")
 
     with tab2:
-        st.button("Qual é a quantidade atual em estoque do medicamento Aradois 50mg?", on_click=set_query, args=("Qual é a quantidade atual em estoque do medicamento Aradois 50mg?",), key="ex5")
-        st.button("Quais medicamentos estão com estoque crítico ou abaixo do mínimo?", on_click=set_query, args=("Quais medicamentos estão com estoque crítico ou abaixo do mínimo?",), key="ex6")
-        st.button("Qual é a localização e lote do medicamento Glifage XR 500mg?", on_click=set_query, args=("Qual é a localização e lote do medicamento Glifage XR 500mg no estoque?",), key="ex7")
+        st.button("Qual é a quantidade atual em estoque do medicamento Losartana 50mg?", on_click=set_query, args=("Qual é a quantidade atual em estoque do medicamento Losartana 50 mg?",), key="ex5")
+        st.button("Quais medicamentos estão com menores quantidades em estoque?", on_click=set_query, args=("Quais produtos estão com as menores quantidades no controle de estoque?",), key="ex6")
+        st.button("Qual é a validade e o lote do medicamento Neosaldina?", on_click=set_query, args=("Qual é a validade e lote do medicamento Neosaldina no estoque?",), key="ex7")
+        st.button("Quais produtos pertencem à categoria Suplemento e qual o estoque de cada um?", on_click=set_query, args=("Quais produtos pertencem à categoria Suplemento e qual a quantidade em estoque de cada um?",), key="ex8")
 
     with tab3:
-        st.button("Qual foi o produto mais vendido no último trimestre?", on_click=set_query, args=("Qual foi o produto mais vendido no último trimestre e qual a receita total?",), key="ex8")
-        st.button("Qual filial teve o melhor desempenho de faturamento em vendas?", on_click=set_query, args=("Qual filial teve o melhor desempenho de faturamento em vendas?",), key="ex9")
-        st.button("Qual categoria de produtos gerou a maior receita?", on_click=set_query, args=("Qual categoria de produtos gerou a maior receita de vendas?",), key="ex10")
+        st.button("Qual foi o produto mais vendido no último trimestre (Abril a Junho/2026)?", on_click=set_query, args=("Qual foi o produto mais vendido no último trimestre (Abril a Junho/2026) e quantas unidades foram vendidas no total?",), key="ex9")
+        st.button("Quais foram os 3 produtos mais vendidos no mês de Junho de 2026?", on_click=set_query, args=("Quais foram os 3 produtos mais vendidos no mês de Junho de 2026 e suas quantidades vendidas?",), key="ex10")
+        st.button("Qual o comparativo de vendas de Paracetamol 750 mg entre Abril, Maio e Junho?", on_click=set_query, args=("Qual o comparativo de estoque atual e quantidade vendida de Paracetamol 750 mg entre Abril, Maio e Junho de 2026?",), key="ex11")
+        st.button("Qual o total de unidades vendidas de Vitamina C nos últimos 3 meses?", on_click=set_query, args=("Qual o total de unidades vendidas de Vitamina C no relatório dos últimos 3 meses?",), key="ex12")
+
+def render_sources_box(sources):
+    with st.expander(f"📚 Fontes consultadas na resposta ({len(sources)})"):
+        for idx, src in enumerate(sources):
+            st.markdown(f"**Fonte {idx+1}:** `{src['source']}` — *{src.get('position', 'N/A')}* (Relevância: {src.get('score', 0)})")
+            content = src.get('content', '')
+            if len(content) > 300:
+                st.caption(f"{content[:300]}... *(trecho completo consultado pela IA)*")
+            else:
+                st.caption(content)
 
 # Render Chat Messages
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"], avatar="💊" if msg["role"] == "assistant" else "👤"):
         st.markdown(msg["content"])
         if msg.get("sources"):
-            with st.expander("📚 Fontes consultadas na resposta"):
-                for idx, src in enumerate(msg["sources"]):
-                    st.markdown(f"**Fonte {idx+1}:** `{src['source']}` ({src.get('position', 'N/A')}) — *Relevância: {src.get('score', 0)}*")
-                    st.caption(f"_{src['content']}_")
+            render_sources_box(msg["sources"])
 
 # Process User Input
 prompt = st.chat_input("Digite sua pergunta sobre a PrimePharma...")
@@ -321,22 +331,22 @@ if prompt:
                 # Prepare context
                 context_text = ""
                 for idx, src in enumerate(sources):
-                    context_text += f"Documento [{idx + 1}]: {src['source']} ({src['position']})\nConteúdo: {src['content']}\n\n"
+                    context_text += f"Documento [{idx + 1}]: {src['source']} ({src['position']})\nConteúdo:\n{src['content']}\n\n"
 
                 # System instruction
                 system_instruction = (
                     "Você é o PrimeAssist AI, o assistente de inteligência artificial oficial da empresa PrimePharma.\n"
                     "Sua principal diretriz é responder à pergunta do usuário baseando-se EXCLUSIVAMENTE nas "
                     "informações contidas no Contexto Oficial fornecido abaixo. As informações do Contexto vêm de "
-                    "documentos e planilhas oficiais da empresa.\n\n"
-                    "Regras cruciais:\n"
-                    "1. Responda apenas com base no Contexto Oficial fornecido. Se a resposta para a pergunta não estiver presente "
-                    "no Contexto, diga exatamente: 'Desculpe, não encontrei essa informação nos documentos oficiais da PrimePharma.'\n"
-                    "2. NUNCA utilize conhecimento externo, suposições ou dados fora do contexto. Não adivinhe dados de estoque, preços ou regras.\n"
-                    "3. Mantenha um tom profissional, prestativo e corporativo.\n"
-                    "4. Não mencione explicitamente termos técnicos de RAG como 'de acordo com o contexto fornecido' ou 'baseado no documento'. "
-                    "Responda diretamente e com precisão.\n"
-                    "5. Formate a resposta usando Markdown de forma limpa (tabelas, listas, negrito).\n\n"
+                    "documentos corporativos (PDFs/POPs) e planilhas oficiais de dados (CSV/Excel de Vendas e Estoque).\n\n"
+                    "Diretrizes cruciais de resposta:\n"
+                    "1. Ao responder perguntas sobre planilhas de vendas ou controle de estoque, analise com atenção as tabelas "
+                    "fornecidas no Contexto Oficial, some e compare os valores com exatidão matemática e formate a resposta com clareza "
+                    "(use tabelas Markdown, negrito ou listas organizadas).\n"
+                    "2. Se a informação solicitada não constar no Contexto Oficial, diga exatamente: 'Desculpe, não encontrei essa informação nos documentos e planilhas oficiais da PrimePharma.'\n"
+                    "3. NUNCA utilize dados externos, suposições ou adivinhações fora do contexto fornecido.\n"
+                    "4. Mantenha um tom profissional, prestativo e corporativo.\n"
+                    "5. Não mencione termos técnicos de RAG como 'conforme o contexto' ou 'no bloco recuperado'. Responda diretamente.\n\n"
                     "CONTEXTO OFICIAL:\n"
                     "----------------------\n"
                     f"{context_text if context_text else 'NENHUM DOCUMENTO OU PLANILHA ENCONTRADO NA BASE DE DADOS.'}\n"
@@ -361,10 +371,7 @@ if prompt:
                 if answer_text:
                     st.markdown(answer_text)
                     if sources:
-                        with st.expander("📚 Fontes consultadas na resposta"):
-                            for idx, src in enumerate(sources):
-                                st.markdown(f"**Fonte {idx+1}:** `{src['source']}` ({src.get('position', 'N/A')}) — *Relevância: {src.get('score', 0)}*")
-                                st.caption(f"_{src['content']}_")
+                        render_sources_box(sources)
 
                     st.session_state.messages.append({
                         "role": "assistant",
@@ -390,6 +397,7 @@ if prompt:
 if st.button("🗑️ Limpar Conversa", key="btn_clear_chat", help="Reiniciar histórico de mensagens"):
     st.session_state.messages = [dict(m) for m in DEFAULT_MESSAGES]
     st.rerun()
+
 
 
 

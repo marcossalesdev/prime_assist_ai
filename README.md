@@ -1,5 +1,8 @@
 # PrimeAssist AI 🤖💊
 
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://prime-assist-ai.streamlit.app/)
+🌐 **Acesse a aplicação online em produção:** [https://prime-assist-ai.streamlit.app/](https://prime-assist-ai.streamlit.app/)
+
 O **PrimeAssist AI** é um assistente virtual inteligente corporativo desenvolvido sob medida para a **PrimePharma**. Ele foi projetado para responder a dúvidas operacionais de colaboradores e clientes de forma precisa, natural e contextualizada, baseando-se exclusivamente na base de documentos oficiais e planilhas internas da empresa.
 
 O projeto implementa uma arquitetura **RAG (Retrieval-Augmented Generation)** local que lê arquivos estruturados (`.csv`, `.xlsx`), documentos em formato `.pdf` e arquivos `.txt`. O motor de busca recupera as informações mais relevantes em tempo real e utiliza a API do **Google Gemini (modelo `gemini-3.5-flash`)** para sintetizar a resposta final em linguagem natural, citando as fontes oficiais de consulta.
@@ -109,6 +112,8 @@ O servidor e a interface frontend estarão disponíveis em: **`http://localhost:
 ---
 
 ## 🚀 Deploy no Streamlit Community Cloud
+
+> 🔗 **Aplicação em Produção:** [https://prime-assist-ai.streamlit.app/](https://prime-assist-ai.streamlit.app/)
 
 Para colocar o **PrimeAssist AI** no ar gratuitamente no **Streamlit Cloud**:
 
