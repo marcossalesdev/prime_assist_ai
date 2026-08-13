@@ -185,10 +185,17 @@ with st.sidebar:
         st.success("Base de conhecimento re-indexada!")
         st.rerun()
 
-    st.divider()
-    if st.button("🗑️ Limpar Conversa"):
-        st.session_state.messages = []
-        st.rerun()
+# Initial Greeting
+DEFAULT_MESSAGES = [
+    {
+        "role": "assistant",
+        "content": "Olá! Eu sou o **PrimeAssist AI**, o assistente corporativo da **PrimePharma**.\n\n"
+                   "Posso responder a dúvidas sobre políticas internas, procedimentos de atendimento, "
+                   "trocas e devoluções, programa de fidelidade, controle de estoque e relatórios de vendas. "
+                   "Como posso te ajudar hoje?",
+        "sources": []
+    }
+]
 
 # Main App Header
 col1, col2 = st.columns([0.8, 0.2])
@@ -200,17 +207,8 @@ with col2:
     st.markdown(f'<span class="badge-status">● RAG Ativo ({len(rag_engine.chunks)} blocos)</span>', unsafe_allow_html=True)
 
 # Initialize Chat History
-if "messages" not in st.session_state:
-    st.session_state.messages = [
-        {
-            "role": "assistant",
-            "content": "Olá! Eu sou o **PrimeAssist AI**, o assistente corporativo da **PrimePharma**.\n\n"
-                       "Posso responder a dúvidas sobre políticas internas, procedimentos de atendimento, "
-                       "trocas e devoluções, programa de fidelidade, controle de estoque e relatórios de vendas. "
-                       "Como posso te ajudar hoje?",
-            "sources": []
-        }
-    ]
+if "messages" not in st.session_state or not st.session_state.messages:
+    st.session_state.messages = [dict(m) for m in DEFAULT_MESSAGES]
 
 # Example Queries Section
 with st.expander("💡 Sugestões de perguntas rápidas por categoria", expanded=False):
@@ -347,3 +345,12 @@ if prompt:
                         "content": err_msg,
                         "sources": sources
                     })
+
+# Action bar below the question and chat interaction area
+st.markdown("<br>", unsafe_allow_html=True)
+col_space, col_clear = st.columns([0.78, 0.22])
+with col_clear:
+    if st.button("🗑️ Limpar Conversa", use_container_width=True, help="Reiniciar histórico de mensagens"):
+        st.session_state.messages = [dict(m) for m in DEFAULT_MESSAGES]
+        st.rerun()
+
