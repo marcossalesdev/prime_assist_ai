@@ -25,15 +25,21 @@ def list_gemini_models(api_key: str) -> Tuple[List[str], Optional[str]]:
             
             # Sort with newest/fastest first
             priority = [
+                "gemini-flash-latest",
+                "gemini-3.5-flash",
+                "gemini-3-flash-preview",
+                "gemini-3.5-flash-lite",
+                "gemini-3.6-flash",
+                "gemini-pro-latest",
+                "gemini-2.5-pro",
+                "gemini-2.5-flash",
                 "gemini-2.0-flash",
                 "gemini-1.5-flash",
                 "gemini-1.5-flash-latest",
                 "gemini-1.5-flash-8b",
-                "gemini-2.5-flash",
                 "gemini-2.0-flash-lite",
                 "gemini-1.5-pro",
-                "gemini-1.5-pro-latest",
-                "gemini-2.5-pro"
+                "gemini-1.5-pro-latest"
             ]
             sorted_models = []
             for p in priority:
@@ -112,7 +118,7 @@ def generate_gemini_content(
     api_key: str,
     prompt: str,
     system_instruction: str = "",
-    model_name: str = "gemini-2.0-flash",
+    model_name: str = "gemini-flash-latest",
     history: Optional[List[Dict[str, str]]] = None
 ) -> Tuple[Optional[str], Optional[str]]:
     """
@@ -127,11 +133,18 @@ def generate_gemini_content(
     # Priority list of models to try
     candidate_models = [model_name]
     fallback_chain = [
+        "gemini-flash-latest",
+        "gemini-3.5-flash",
+        "gemini-3-flash-preview",
+        "gemini-3.5-flash-lite",
+        "gemini-3.6-flash",
+        "gemini-pro-latest",
+        "gemini-2.5-pro",
+        "gemini-2.5-flash",
         "gemini-2.0-flash",
         "gemini-1.5-flash",
         "gemini-1.5-flash-latest",
         "gemini-1.5-flash-8b",
-        "gemini-2.5-flash",
         "gemini-1.5-pro",
         "gemini-1.5-pro-latest"
     ]

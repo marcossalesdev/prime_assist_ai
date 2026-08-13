@@ -223,7 +223,7 @@ async def chat_endpoint(request: ChatRequest):
         api_key=api_key,
         prompt=request.message,
         system_instruction=system_instruction,
-        model_name="gemini-2.0-flash",
+        model_name="gemini-flash-latest",
         history=formatted_history
     )
 

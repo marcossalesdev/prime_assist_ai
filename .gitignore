@@ -30,6 +30,8 @@ wheels/
 .env
 .env.*
 secrets.json
+.streamlit/secrets.toml
+
 
 # IDEs and OS
 .vscode/
