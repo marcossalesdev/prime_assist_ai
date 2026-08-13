@@ -44,6 +44,25 @@ st.markdown("""
         margin-top: 8px;
         font-size: 0.85rem;
     }
+    /* Estilo do botao Limpar Conversa abaixo da caixa de pergunta */
+    div.st-key-btn_clear_chat {
+        display: flex;
+        justify-content: center;
+        margin: 6px auto 14px auto;
+    }
+    div.st-key-btn_clear_chat button {
+        border-radius: 20px;
+        padding: 4px 18px;
+        font-size: 0.82rem;
+        border: 1px solid rgba(128, 128, 128, 0.25);
+        background: rgba(255, 255, 255, 0.04);
+        transition: all 0.2s ease;
+    }
+    div.st-key-btn_clear_chat button:hover {
+        border-color: #ef4444;
+        color: #ef4444;
+        background: rgba(239, 68, 68, 0.08);
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -124,20 +143,20 @@ with st.sidebar:
         if models_found:
             available_models = models_found
 
-    # Test Key button
-    if st.button("🧪 Testar Conexão da Chave"):
+    # Conectar API button
+    if st.button("🔌 Conectar API"):
         if not active_key:
-            st.warning("Insira uma chave de API antes de testar.")
+            st.warning("Insira uma chave de API antes de conectar.")
         else:
-            with st.spinner("Testando chave com a API Google Gemini..."):
+            with st.spinner("Conectando e testando chave com a API Google Gemini..."):
                 test_models, err = list_gemini_models(active_key)
                 if test_models:
-                    st.success(f"✅ Chave válida e ativa! ({len(test_models)} modelos disponíveis)")
+                    st.success(f"✅ Conectado com sucesso! ({len(test_models)} modelos disponíveis)")
                     with st.expander("Modelos disponíveis para sua chave"):
                         for m in test_models:
                             st.caption(f"• `{m}`")
                 else:
-                    st.error(f"❌ Falha na validação da chave:\n\n{err}")
+                    st.error(f"❌ Falha ao conectar API:\n\n{err}")
 
     # Model Selection
     selected_model = st.selectbox(
@@ -336,7 +355,7 @@ if prompt:
                         f"❌ **Erro ao processar consulta:** {err}\n\n"
                         "**Dicas para resolver:**\n"
                         "1. Certifique-se de que a chave foi criada no **[Google AI Studio](https://aistudio.google.com/)** (Get API Key).\n"
-                        "2. Use o botão **'🧪 Testar Conexão da Chave'** na barra lateral para diagnosticar a chave.\n"
+                        "2. Use o botão **'🔌 Conectar API'** na barra lateral para diagnosticar a chave.\n"
                         "3. Se você criou a chave no Google Cloud Console comum, certifique-se de habilitar a **Generative Language API** no seu projeto."
                     )
                     st.error(err_msg)
@@ -346,11 +365,11 @@ if prompt:
                         "sources": sources
                     })
 
-# Action bar below the question and chat interaction area
-st.markdown("<br>", unsafe_allow_html=True)
-col_space, col_clear = st.columns([0.78, 0.22])
-with col_clear:
-    if st.button("🗑️ Limpar Conversa", use_container_width=True, help="Reiniciar histórico de mensagens"):
+# Botao Limpar Conversa posicionado abaixo da caixa de pergunta
+col_l, col_btn, col_r = st.columns([0.38, 0.24, 0.38])
+with col_btn:
+    if st.button("🗑️ Limpar Conversa", key="btn_clear_chat", use_container_width=True, help="Reiniciar histórico de mensagens"):
         st.session_state.messages = [dict(m) for m in DEFAULT_MESSAGES]
         st.rerun()
+
 
