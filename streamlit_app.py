@@ -1,7 +1,5 @@
 import os
-import shutil
 import streamlit as st
-import pandas as pd
 from backend.rag import RAGEngine
 from gemini_client import list_gemini_models, generate_gemini_content
 

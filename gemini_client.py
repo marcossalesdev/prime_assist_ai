@@ -1,5 +1,4 @@
 import requests
-import json
 from typing import List, Dict, Any, Optional, Tuple
 
 def list_gemini_models(api_key: str) -> Tuple[List[str], Optional[str]]:

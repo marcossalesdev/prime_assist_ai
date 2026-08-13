@@ -1,21 +1,25 @@
 import os
+import sys
 import shutil
 import uvicorn
-from fastapi import FastAPI, UploadFile, File, HTTPException, Form
+from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import List, Optional
-import google.generativeai as genai
 
-try:
-    from backend.rag import RAGEngine
-except ImportError:
-    from rag import RAGEngine
+# Ensure project root is in sys.path
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(BASE_DIR)
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+
+from backend.rag import RAGEngine
+from gemini_client import generate_gemini_content
 
 app = FastAPI(title="PrimeAssist AI API")
 
-# Enable CORS for local development
+# Enable CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -25,7 +29,6 @@ app.add_middleware(
 )
 
 # Initialize RAG Engine
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 rag_engine = RAGEngine(DATA_DIR)
 
@@ -155,7 +158,6 @@ async def chat_endpoint(request: ChatRequest):
     api_key = request.apiKey or os.environ.get("GEMINI_API_KEY")
     
     if not api_key:
-        # If no key, retrieve sources but return a placeholder answer informing about key setup
         source_summary = "\n".join([f"- {s['source']} ({s['position']}): {s['content'][:150]}..." for s in sources])
         placeholder_answer = (
             "Olá! Eu sou o **PrimeAssist AI**, o assistente oficial da PrimePharma.\n\n"
@@ -169,16 +171,6 @@ async def chat_endpoint(request: ChatRequest):
             sources=sources,
             success=True,
             requiresKey=True
-        )
-
-    # Setup Gemini API Key
-    try:
-        genai.configure(api_key=api_key)
-    except Exception as e:
-        return ChatResponse(
-            answer=f"Erro ao configurar a API do Gemini: {str(e)}. Verifique se a sua chave está correta.",
-            sources=sources,
-            success=False
         )
 
     # Format the context text for the model
@@ -212,13 +204,6 @@ async def chat_endpoint(request: ChatRequest):
         for msg in request.history
     ]
 
-    try:
-        from gemini_client import generate_gemini_content
-    except ImportError:
-        import sys
-        sys.path.append(os.path.dirname(BASE_DIR))
-        from gemini_client import generate_gemini_content
-
     answer_text, err = generate_gemini_content(
         api_key=api_key,
         prompt=request.message,
@@ -241,7 +226,7 @@ async def chat_endpoint(request: ChatRequest):
     )
 
 # Mount the static files folder (frontend)
-FRONTEND_DIR = os.path.join(os.path.dirname(BASE_DIR), "frontend")
+FRONTEND_DIR = os.path.join(PROJECT_ROOT, "frontend")
 if os.path.exists(FRONTEND_DIR):
     app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
 else:
@@ -249,5 +234,3 @@ else:
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
-# Force reload for CSV update
-
