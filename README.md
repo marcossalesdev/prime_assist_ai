@@ -9,6 +9,33 @@ O projeto implementa uma arquitetura **RAG (Retrieval-Augmented Generation)** lo
 
 ---
 
+## 📸 Demonstração do Projeto em Funcionamento
+
+Abaixo estão algumas capturas de tela demonstrando o **PrimeAssist AI** em execução no ambiente de produção:
+
+<div align="center">
+
+### 1. Tela Inicial & Status do RAG Engine
+![Interface Inicial do PrimeAssist AI](assets/interface_inicial.jpg)
+*Interface principal exibindo o status do RAG Engine ativo (196 blocos indexados), seletores de modelo e chave da API.*
+
+<br/>
+
+### 2. Consulta Institucional (Missão da Empresa)
+![Consulta Institucional - Missão da Empresa](assets/consulta_institucional.jpg)
+*Resposta gerada a partir dos manuais internos com citação das fontes oficiais.*
+
+<br/>
+
+### 3. Consulta de Controle de Estoque em Tempo Real
+![Consulta de Estoque em Tempo Real](assets/consulta_estoque.jpg)
+*Consulta detalhada de estoque retornando código do item, lote, validade e quantidade de caixas.*
+
+</div>
+
+---
+
+
 ## 🏢 Sobre a PrimePharma
 
 Fundada em **2012** em Salvador, Bahia, a **PrimePharma** é uma rede regional de farmácias guiada pelo slogan *"Confiança e cuidado para você."*
